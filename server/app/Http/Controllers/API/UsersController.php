@@ -21,6 +21,9 @@ class UsersController extends Controller
 
         $users = User::all();
         $user = [...$users->where('email_address', $request->input('email_address'))];
+
+        if(!$user) return response()->json(['status' => 404, 'message' => 'No account found.']);
+
         $db_password = $user[0]->password;
         $hashCheck = Hash::check($request->input('password'), $db_password);
 
@@ -29,9 +32,6 @@ class UsersController extends Controller
         }
         else if(!$hashCheck) {
             return response()->json(['status' => 401, 'message' => 'Your password is incorrect.']);
-        }
-        else {
-            return response()->json(['status' => 404, 'message' => 'No account found.']);
         }
     }
 
@@ -45,6 +45,9 @@ class UsersController extends Controller
     {
 
         $hashed = Hash::make($request->input('password'));
+        $allUsers = User::all();
+        $user = [...$allUsers->where('email_address', $request->input('email_address'))];
+        if($user) return response()->json(['status'=>409,'message'=>'Email already exists.']);
 
         $user = new User();
         $user->first_name = $request->input('first_name', '');

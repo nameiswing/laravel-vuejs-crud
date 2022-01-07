@@ -2,7 +2,7 @@
     <div class="card px-4 py-5 mx-auto shadow-sm mt-2" style="max-width:32rem">
         <h1 class="card-title mb-4 ms-3">Create Account</h1>
         <div class="card-body">
-            <form class="mb-4">
+            <form class="mb-4"  @submit.prevent="createAccount">
                 <div class="row">
                     <div class="col mb-4">
                         <label for="first_name" class="form-label">First Name <span class="text-danger">*</span></label>
@@ -33,7 +33,7 @@
                     <input class="form-check-input" type="checkbox" name="status" id="status" v-model="checked">
                     <label for="status" class="form-check-label" >Admin Access</label>
                 </div>
-                <button class="btn btn-success w-100 mt-3" style="height: 3rem" @click.self.prevent="createAccount">Create</button>
+                <button class="btn btn-success w-100 mt-3" style="height: 3rem">Create</button>
             </form>
             <p class="card-text">
                 Have an account?
@@ -81,7 +81,18 @@ export default {
             this.axios.post("api/user-create", this.accountInfo).then( res => {
                 if(res.data.status == 200) {
                     this.$swal('Success', res.data.message);
-                } else {
+                    this.first_name = '';
+                    this.last_name = '';
+                    this.email_address = '';
+                    this.mobile_number = '';
+                    this.address = '';
+                    this.password = '';
+                    this.$router.push('/');
+                } 
+                else if(res.data.status == 409) {
+                    this.$swal('Error', res.data.message);
+                }
+                else {
                     this.$swal('Error', 'Unable to create account. Please try again.');
                 }
             })

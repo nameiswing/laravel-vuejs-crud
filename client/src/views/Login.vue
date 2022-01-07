@@ -37,7 +37,6 @@
         },
         methods: {
             login() {
-                console.log('working');
                 this.axios.post(`api/login`, this.loginData).then( res => {
                     if(res.data.status == 200) {
                         // console.log(res.data.message);
@@ -46,6 +45,12 @@
                         this.$store.commit('setIsLoggedIn', true);
                         this.createSession();
                         this.$router.push('products');
+                    }
+                    else if(res.data.status === 404) {
+                        this.$swal(res.data.message, 'Please sign up or try again.', 'error');
+                    }
+                    else {
+                        console.error('Something went wrong. Unable to log in.')
                     }
                 })
             },
